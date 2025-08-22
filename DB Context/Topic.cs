@@ -15,6 +15,7 @@ namespace Solv_Assignment_EF_2.DB_Context
         public int ID { get; set; }
         public string Name { get; set; } = null!;
 
+
         public ICollection<Course> Courses { get; set; } = new List<Course>();
     }
 }
