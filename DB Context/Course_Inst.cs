@@ -20,6 +20,6 @@ namespace Solv_Assignment_EF_2.DB_Context
         public int Course_ID { get; set; }
         public Course Course { get; set; } = null!;
 
-        public int? Evaluate { get; set; }
+        public string Evaluate { get; set; } = string.Empty;
     }
 }

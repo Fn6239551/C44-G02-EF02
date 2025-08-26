@@ -22,9 +22,14 @@ namespace Solv_Assignment_EF_2.DB_Context
         public string? Address { get; set; }
         public decimal HourRateBouns { get; set; }
 
+        //FK
         public int Dept_ID { get; set; }
         public Department Department { get; set; } = null!;
 
+        // M:M with Course via Course_Inst
         public ICollection<Course_Inst> CourseInstructors { get; set; } = new List<Course_Inst>();
+
+        // Navigation عكسية لعلاقة One-to-One (رئيس قسم)
+        public Department? HeadOf { get; set; }
     }
 }

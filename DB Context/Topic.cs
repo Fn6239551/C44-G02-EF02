@@ -13,8 +13,7 @@ namespace Solv_Assignment_EF_2.DB_Context
     public class Topic
     {
         public int ID { get; set; }
-        public string Name { get; set; } = null!;
-
+        public string Name { get; set; } = string.Empty;
 
         public ICollection<Course> Courses { get; set; } = new List<Course>();
     }

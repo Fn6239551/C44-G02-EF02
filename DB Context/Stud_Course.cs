@@ -14,11 +14,11 @@ namespace Solv_Assignment_EF_2.DB_Context
     public class Stud_Course
     {
         public int Stud_ID { get; set; }
-        public Student Student { get; set; } = null;
+        public Student Student { get; set; } =null!;
 
         public int Course_ID { get; set; }
         public Course Course { get; set; } = null!;
 
-        public int? Grade { get; set; }
+        public decimal Grade { get; set; }
     }
 }

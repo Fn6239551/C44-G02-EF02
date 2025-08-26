@@ -15,94 +15,119 @@ namespace Solv_Assignment_EF_2.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(
-                "Server=DESKTOP-SMBVS1T;Database=ITI_DB;Trusted_Connection=True;TrustServerCertificate=True");
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer(
+                    @"Server=.;Database=SolvAssignmentEF;Trusted_Connection=True;TrustServerCertificate=True;");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
-            modelBuilder.Entity<Student>()
-                .Property(s => s.FName).IsRequired().HasMaxLength(50);
-            modelBuilder.Entity<Student>()
-                .Property(s => s.LName).IsRequired().HasMaxLength(50);
-            modelBuilder.Entity<Student>()
-                .ToTable(t =>
-                {
-                    t.HasCheckConstraint("CK_Student_Age", "[Age] >= 18");
-                });
+            modelBuilder.Entity<Student>(e =>
+            {
+                e.ToTable("Student");
+                e.HasKey(x => x.Id);
 
-            modelBuilder.Entity<Department>()
-                .HasIndex(d => d.Name).IsUnique();
-            modelBuilder.Entity<Department>()
-                .ToTable(t =>
-                {
-                    t.HasCheckConstraint("CK_Department_HiringDate", "[HiringDate] <= GETDATE()");
-                });
-            modelBuilder.Entity<Department>()
-                .HasOne(d => d.Head)
-                .WithMany()
-                .HasForeignKey(d => d.Ins_ID)
-                .OnDelete(DeleteBehavior.Restrict);
+                e.Property(x => x.FName).HasMaxLength(50).IsRequired();
+                e.Property(x => x.LName).HasMaxLength(50).IsRequired();
+                e.Property(x => x.Address).HasMaxLength(200);
 
-          
-            modelBuilder.Entity<Course>()
-                .HasIndex(c => c.Name).IsUnique();
-            modelBuilder.Entity<Course>()
-                .ToTable(t =>
-                {
-                    t.HasCheckConstraint("CK_Course_Duration", "[Duration] > 0");
-                });
+                e.HasOne(x => x.Department)
+                 .WithMany(d => d.Students)
+                 .HasForeignKey(x => x.Dep_Id)
+                 .OnDelete(DeleteBehavior.Restrict);
+            });
 
-        
-            modelBuilder.Entity<Instructor>()
-                .ToTable(t =>
-                {
-                    t.HasCheckConstraint("CK_Instructor_Salary", "[Salary] > 0");
-                    t.HasCheckConstraint("CK_Instructor_HourRateBouns", "[HourRateBouns] >= 0");
-                });
-            modelBuilder.Entity<Instructor>()
-                .Property(i => i.HourRateBouns)
-                .HasColumnType("decimal(10,2)")
-                .HasDefaultValue(0);
+            modelBuilder.Entity<Department>(e =>
+            {
+                e.ToTable("Department");
+                e.HasKey(x => x.Id);
 
-        
-            modelBuilder.Entity<Topic>()
-                .HasIndex(t => t.Name).IsUnique();
+                e.Property(x => x.Name).HasMaxLength(100).IsRequired();
 
-            modelBuilder.Entity<Stud_Course>()
-                .HasKey(sc => new { sc.Stud_ID, sc.Course_ID });
-            modelBuilder.Entity<Stud_Course>()
-                .HasOne(sc => sc.Student)
-                .WithMany(s => s.StudCourses)
-                .HasForeignKey(sc => sc.Stud_ID);
-            modelBuilder.Entity<Stud_Course>()
-                .HasOne(sc => sc.Course)
-                .WithMany(c => c.StudCourses)
-                .HasForeignKey(sc => sc.Course_ID);
-            modelBuilder.Entity<Stud_Course>()
-                .ToTable(t =>
-                {
-                    t.HasCheckConstraint("CK_Stud_Course_Grade", "[Grade] BETWEEN 0 AND 100");
-                });
+                e.HasOne(d => d.Head)
+                 .WithOne(i => i.HeadOf)
+                 .HasForeignKey<Department>(d => d.Ins_ID)
+                 .HasPrincipalKey<Instructor>(i => i.ID)
+                 .OnDelete(DeleteBehavior.Restrict);
 
-            
-            modelBuilder.Entity<Course_Inst>()
-                .HasKey(ci => new { ci.inst_ID, ci.Course_ID });
-            modelBuilder.Entity<Course_Inst>()
-                .HasOne(ci => ci.Instructor)
-                .WithMany(i => i.CourseInstructors)
-                .HasForeignKey(ci => ci.inst_ID);
-            modelBuilder.Entity<Course_Inst>()
-                .HasOne(ci => ci.Course)
-                .WithMany(c => c.CourseInstructors)
-                .HasForeignKey(ci => ci.Course_ID);
-            modelBuilder.Entity<Course_Inst>()
-     .ToTable(t =>
-     {
-         t.HasCheckConstraint("CK_CourseInst_Evaluate", "[Evaluate] BETWEEN 1 AND 10");
-     });
+                e.HasIndex(d => d.Ins_ID).IsUnique().HasFilter("[Ins_ID] IS NOT NULL");
+            });
 
+            modelBuilder.Entity<Instructor>(e =>
+            {
+                e.ToTable("Instructor");
+                e.HasKey(x => x.ID);
+
+                e.Property(x => x.Name).HasMaxLength(100).IsRequired();
+                e.Property(x => x.Address).HasMaxLength(200);
+                e.Property(x => x.Salary).HasColumnType("decimal(18,2)");
+                e.Property(x => x.HourRateBouns).HasColumnType("decimal(18,2)");
+
+                e.HasOne(x => x.Department)
+                 .WithMany(d => d.Instructors)
+                 .HasForeignKey(x => x.Dept_ID)
+                 .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Topic>(e =>
+            {
+                e.ToTable("Topic");
+                e.HasKey(x => x.ID);
+
+                e.Property(x => x.Name).HasMaxLength(100).IsRequired();
+            });
+
+            modelBuilder.Entity<Course>(e =>
+            {
+                e.ToTable("Course");
+                e.HasKey(x => x.ID);
+
+                e.Property(x => x.Name).HasMaxLength(100).IsRequired();
+                e.Property(x => x.Description).HasMaxLength(500);
+
+                e.HasOne(x => x.Topic)
+                 .WithMany(t => t.Courses)
+                 .HasForeignKey(x => x.Top_ID)
+                 .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Stud_Course>(e =>
+            {
+                e.ToTable("Stud_Course");
+                e.HasKey(x => new { x.Stud_ID, x.Course_ID });
+
+                e.Property(x => x.Grade).HasColumnType("decimal(5,2)");
+
+                e.HasOne(x => x.Student)
+                 .WithMany(s => s.Stud_Courses)
+                 .HasForeignKey(x => x.Stud_ID)
+                 .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasOne(x => x.Course)
+                 .WithMany(c => c.Stud_Courses)
+                 .HasForeignKey(x => x.Course_ID)
+                 .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Course_Inst>(e =>
+            {
+                e.ToTable("Course_Inst");
+                e.HasKey(x => new { x.inst_ID, x.Course_ID });
+
+                e.Property(x => x.Evaluate).HasMaxLength(200);
+
+                e.HasOne(x => x.Instructor)
+                 .WithMany(i => i.CourseInstructors)
+                 .HasForeignKey(x => x.inst_ID)
+                 .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasOne(x => x.Course)
+                 .WithMany(c => c.Course_Instructors)
+                 .HasForeignKey(x => x.Course_ID)
+                 .OnDelete(DeleteBehavior.Cascade);
+            });
         }
     }
 }

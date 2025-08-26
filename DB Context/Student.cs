@@ -25,10 +25,11 @@ namespace Solv_Assignment_EF_2.DB_Context
         public string? Address { get; set; }
         public int Age { get; set; }
 
+        //FK
         public int Dep_Id { get; set; }
         public Department Department { get; set; } = null!;
 
-        public ICollection<Stud_Course> StudCourses { get; set; } = new List<Stud_Course>();
-
+        // M:M with Course via Stud_Course
+        public ICollection<Stud_Course> Stud_Courses { get; set; } = new List<Stud_Course>();
     }
 }

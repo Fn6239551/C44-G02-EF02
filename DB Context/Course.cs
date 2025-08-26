@@ -17,12 +17,13 @@ namespace Solv_Assignment_EF_2.DB_Context
         public int ID { get; set; }
         public int Duration { get; set; }
         public string Name { get; set; } = null!;
-        public string? Description { get; set; }
+        public string Description { get; set; }=string.Empty;
 
+        //FK
         public int Top_ID { get; set; }
         public Topic Topic { get; set; } = null!;
 
-        public ICollection<Stud_Course> StudCourses { get; set; } = new List<Stud_Course>();
-        public ICollection<Course_Inst> CourseInstructors { get; set; } = new List<Course_Inst>();
+        public ICollection<Stud_Course> Stud_Courses { get; set; } = new List<Stud_Course>();
+        public ICollection<Course_Inst> Course_Instructors { get; set; } = new List<Course_Inst>();
     }
 }

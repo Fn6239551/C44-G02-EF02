@@ -16,13 +16,13 @@ namespace Solv_Assignment_EF_2.DB_Context
     {
         public int Id { get; set; }
         public string? Name { get; set; }
-       
-
         public DateTime HiringDate { get; set; }
 
+        //FK
         public int? Ins_ID { get; set; }
         public Instructor? Head { get; set; }
 
+        //one to many
         public ICollection<Student> Students { get; set; } = new List<Student>();
         public ICollection<Instructor> Instructors { get; set; } = new List<Instructor>();
     }
