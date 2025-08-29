@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Solv_Assignment_EF_2.Data;
 
@@ -11,9 +12,11 @@ using Solv_Assignment_EF_2.Data;
 namespace Solv_Assignment_EF_2.Migrations
 {
     [DbContext(typeof(ItiDbContext))]
-    partial class ItiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250829133046_ReInit")]
+    partial class ReInit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
